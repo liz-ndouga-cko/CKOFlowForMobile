@@ -6,7 +6,7 @@ import CheckoutComponentsSDK
 class CheckoutFlowManager: NSObject {
     
     private var checkoutComponents: CheckoutComponents?
-    private let publicKey = "pk_sbox_ha67guqlgehtv73bfcuvqr6o3qr"
+    private let publicKey = "pk_sbox_ha67guqlgehtv73bfcuvqr6o3qr" // /!\  Provide your own public key
     private let environment = CheckoutComponents.Environment.sandbox
     
     @objc static func requiresMainQueueSetup() -> Bool {
@@ -32,12 +32,16 @@ class CheckoutFlowManager: NSObject {
                     publicKey: publicKey,
                     environment: environment,
                     callbacks: CheckoutComponents.Callbacks(
-                        onSuccess: { paymentMethod, paymentID in
+                      onTokenized: { tokenDetails in
+                        print("Tokenization successful: \(tokenDetails)")
+                        print("Token: \(tokenDetails.token)")
+                      },
+                      onSuccess: { paymentMethod, paymentID in
                             print("Payment successful: \(paymentID)")
-                        },
-                        onError: { error in
-                            print("Error: \(error)")
-                        }
+                      },
+                      onError: { error in
+                          print("Error: \(error)")
+                      }
                     )
                 )
                 self.checkoutComponents = CheckoutComponents(configuration: config)
@@ -72,15 +76,35 @@ class CheckoutFlowManager: NSObject {
             }
             
             do {
-                let flowComponent = try checkoutComponents.create(.flow())
+                let flowComponent = try checkoutComponents.create(.
+                flow(options: [
+                    .card(showPayButton: true, // if true: display built-in button - if false: show your own pay button
+                          paymentButtonAction: .tokenization, // .tokenization: for tokenization-only -  .payment: for payments
+                         ),
+                    // .applePay(merchantIdentifier: "your.merchant.ID")
+                  ]))
                 let flowView = flowComponent.render()
+              
+                let titledView = VStack(spacing: 16) {
+                      Text("Pay with card")
+                          .font(.title)
+                          .bold()
+                  
+                      Text("Amount to pay: 10.00€ ")
+                          .font(.subheadline)
+                          .foregroundColor(.gray)
+                          .multilineTextAlignment(.center)
+                  
+                      flowView
+                  }
+                  .padding()
                 
-                let hostingController = UIHostingController(rootView: flowView)
+                let hostingController = UIHostingController(rootView: titledView)
                 hostingController.view.frame = rootViewController.view.bounds
                 hostingController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
                 
-                rootViewController.addChild(hostingController)
                 rootViewController.view.addSubview(hostingController.view)
+                rootViewController.addChild(hostingController)
                 hostingController.didMove(toParent: rootViewController)
                 
                 resolver(["success": true])
