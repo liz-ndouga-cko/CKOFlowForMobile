@@ -16,7 +16,7 @@ Before you begin, ensure the following tools and dependancies are installed:
 
 
 To check if your environment is properly set up, run : 
-    ```bash
+    ```
         npx react-native doctor
     ```
 In my case the output reported:
@@ -340,19 +340,19 @@ let flowComponent = try checkoutComponents.create(.
 ### 6.1 In project root
 
 Check again your environment: 
-    ```bash
+    ```
         npx react-native doctor
     ```
 
 Start your application:
-    ```bash 
+    ``` 
         npx react-native start --reset-cache
     ```
 
 ### 6.2 In another terminal
 
 Run ios:
-    ```bash 
+    ``` 
         npx react-native run-ios
     ```
 
