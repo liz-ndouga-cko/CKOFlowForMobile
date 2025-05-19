@@ -1,97 +1,368 @@
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
-# Getting Started
+# **Guide to set up React Native with Checkout.com's Flow SDK for iOS and Android
+This guide provides a complete walkthrough for setting up a React Native development environment and integrating [Checkout.com's Android Flow SDK](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-on-your-mobile-app/get-started-with-flow-for-mobile) for both iOS and 🔜 Android. It includes detailed instructions, common troubleshooting steps, and essential tips to ensure a smooth and efficient setup process for your project.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+# iOS
 
-## Step 1: Start Metro
+## 📦 1. Requirements
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+Before you begin, ensure the following tools and dependancies are installed:
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+- React Native `0.73+`
+- [Xcode](https://apps.apple.com/us/app/xcode/id497799835?mt=12) `15+` (tested with `16.3`)
+- [CocoaPods](https://cocoapods.org/)
+- Swift 5.5+
 
-```sh
-# Using npm
-npm start
 
-# OR using Yarn
-yarn start
+To check if your environment is properly set up, run : 
+    ```bash
+        npx react-native doctor
+    ```
+In my case the output reported:
+
+iOS
+ ✓ Xcode - Required for building and installing your app on iOS
+ ✓ Ruby - Required for installing iOS dependencies
+ ✓ CocoaPods - Required for installing iOS dependencies
+ ✓ .xcode.env - File to customize Xcode environment
+
+---
+
+## 🚀 2. Add the CKO iOS SDK 
+
+### **2.1 Open the iOS Project in Xcode**
+
+1. Navigate to the `ios` folder inside your React Native project.
+    
+    ```bash
+    cd ios
+    ```
+    
+2. Open the project workspace in Xcode:
+    
+    ```bash
+    open YourProjectName.xcworkspace
+    ```
+    
+    - If the `.xcworkspace` file doesn't exist, run:
+        
+        ```bash
+        pod install
+        ```       
+
+### **2.2 Add the Checkout SDK via Swift Package Manager (SPM)**
+
+1. In Xcode, select your project from the left sidebar.
+2. Go to **Project > Package Dependencies**.
+3. Click the **+** button.
+4. In the URL field, enter:
+    
+    ```
+    https://github.com/checkout/checkout-ios-components
+    ```
+    
+5. Set **Dependency Rule** to **Up to Exact Version and input: 1.0.0-beta-3 (this is the latest version at the moment)**
+6. Set Add to Project to YourProjectName
+7. Click **Add Package**.
+8. Verify installation:
+    1. In the left panel, under Package dependencies section, you should see CheckoutComponents 
+    2. In the left panel, click on the first YourProjectName, then go to Project>YourProjectName, under Package Dependencies tab, you should see checkout-ios-components listed
+    3. In the left panel, click on the first YourProjectName, then go to Targets>YourProjectName, in the Link Binary with Libraries section, you should see CheckoutComponents. If not, add it by clicking on the plus icon, and searching for it.
+
+If everything looks good, you can proceed with 3. **Initializing CheckoutComponents** in your project.
+
+## 🌁 3. Creating the bridge for CKO Flow SDK 
+
+### **3.1 Add Swift to the Project
+
+### **Step 1: Add a Swift Bridging Header**
+
+1. In Xcode, right-click on your project folder (e.g., `YourProjectName`) and select **New File...**
+2. Choose **Swift File** and name it `Dummy.swift`
+3. When prompted "Would you like to configure an Objective-C bridging header?", click **Create Bridging Header**
+4. This will create:
+    - A `Dummy.swift` file (can be empty)
+    - A `YourProjectName-Bridging-Header.h` file
+
+### **Step 2: Update the Bridging Header**
+
+Open your bridging header file (`YourProjectName-Bridging-Header.h`) and add:
+
+```objectivec
+//
+//  Use this file to import your target's public headers that you would like to expose to Swift.
+//
+#import <React/RCTBridgeModule.h>
+#import <React/RCTViewManager.h>
+#import <React/RCTUtils.h>
+#import <React/RCTConvert.h>
+
 ```
 
-## Step 2: Build and run your app
+### 3.2 Create the CheckoutFlowManager Swift module
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+Create a new Swift file named `CheckoutFlowManager.swift`:
 
-### Android
+1. Right-click on your project folder in Xcode
+2. Select **New File from Template**
+3. Choose **Swift File**
+4. Name it `CheckoutFlowManager.swift`
+5. Copy and paste the code from `CheckoutFlowManager.swift` file within the repository
 
-```sh
-# Using npm
-npm run android
+> Important: Remember to use your own Checkout.com public key.
+> 
 
-# OR using Yarn
-yarn android
+### 3.3 Create the Objective-C Bridge
+
+Create a new Objective-C file to expose your Swift module to React Native:
+
+1. Right-click on your project folder and select **New File from Template**
+2. Choose **Objective-C File**
+3. Name it `CheckoutFlowManagerBridge.m`
+4. Add the following code:
+
+```objectivec
+#import <Foundation/Foundation.h>
+#import <React/RCTBridgeModule.h>
+
+@interface RCT_EXTERN_MODULE(CheckoutFlowManager, NSObject)
+
+// Declare methods exposed to JavaScript with promise support
+RCT_EXTERN_METHOD(initialize:(NSDictionary *)paymentSession
+                  resolver:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(renderFlow:(RCTPromiseResolveBlock)resolve
+                  rejecter:(RCTPromiseRejectBlock)reject)
+
+// Optional test method
+RCT_EXTERN_METHOD(test:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject)
+
+@end
+
 ```
 
-### iOS
+### 3.4 Update the AppDelegate.swift
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+In your `AppDelegate.swift` file, ensure the module name is properly registered:
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+```objectivec
+import UIKit
+import React
 
-```sh
-bundle install
+@UIApplicationMain
+class AppDelegate: UIResponder, UIApplicationDelegate {
+
+    var window: UIWindow?
+    let moduleName = "TestProject" // Must match your React Native Project Name
+
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+
+        let bridge = RCTBridge(delegate: self, launchOptions: launchOptions)
+        let rootView = RCTRootView(bridge: bridge!, moduleName: moduleName, initialProperties: nil)
+
+        let rootViewController = UIViewController()
+        rootViewController.view = rootView
+
+        window = UIWindow(frame: UIScreen.main.bounds)
+        window?.rootViewController = rootViewController
+        window?.makeKeyAndVisible()
+
+        return true
+    }
+}
+
+extension AppDelegate: RCTBridgeDelegate {
+  func sourceURL(for bridge: RCTBridge) -> URL? {
+#if DEBUG
+      return RCTBundleURLProvider.sharedSettings().jsBundleURL(forBundleRoot: "index", fallbackExtension: nil)
+#else
+        return Bundle.main.url(forResource: "main", withExtension: "jsbundle")
+#endif
+    }
+}
+
+@end
+
 ```
 
-Then, and every time you update your native dependencies, run:
+> Important:
+>
+> 1. Ensure `moduleName = @"YourProjectName";` matches your React Native project name
+> 2. Do not modify the rest of the AppDelegate template code unless you know what you're doing
 
-```sh
-bundle exec pod install
+## 💰 4. Adding a Payment session
+
+### 4.1 Before you start
+
+Please check the requirements mentioned in the [CKO documentation](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-on-your-mobile-app/get-started-with-flow-for-mobile#Before_you_start) before requesting a session.
+
+### 4.2 Create a payment session
+
+In your .tsx file, please call your `create payment session` function within your backend.
+
+```
+type PaymentSessionResponse = {
+  id: string;
+  payment_session_token: string;
+  payment_session_secret: string;
+  _links: JSON
+};
+
+async function createSession(): Promise<PaymentSessionResponse | null> {
+  const url = SESSION_URL;
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.statusText}`);
+    }
+
+    const data: PaymentSessionResponse = await response.json();
+
+    return {
+      id: data.id,
+      payment_session_token: data.payment_session_token,
+      payment_session_secret: data.payment_session_secret,
+      _links: data._links,
+    };
+  } catch (error: any) {
+    console.error("Failed to create a payment session:", error.message || error);
+    return null;
+  }
+}
+
+```
+Then retrieve the payment session details and start the payment:
+
+```
+const startPayment = async () => {
+    setStatus('Processing...');
+    setError(null);
+
+    try {
+      const paymentSession = await createSession()
+      if (paymentSession) {
+        const paymentSessionID = paymentSession.id
+        const paymentSessionToken = paymentSession.payment_session_token
+        const paymentSessionSecret = paymentSession.payment_session_secret
+
+        if (Platform.OS === 'ios') {
+          console.log('Initializing iOS payment flow...');
+          try {
+            // Use the promise-based approach for iOS
+            const initResult = await CheckoutFlowManager.initialize(paymentSession);
+            console.log('iOS initialization result:', initResult);
+
+            const renderResult = await CheckoutFlowManager.renderFlow();
+            console.log('iOS render result:', renderResult);
+
+            setStatus('Payment flow started');
+          } catch (iosError) {
+            console.error(`iOS Error: ${iosError instanceof Error ? iosError.message : String(iosError)}`);
+            setError(`iOS Error: ${iosError instanceof Error ? iosError.message : String(iosError)}`);
+            setStatus('Error');
+          }
+        } else if (Platform.OS === 'android') {
+          console.log('Initializing Android payment flow...');
+          try {
+            // For Android, use the existing implementation
+            FlowModule.startPaymentSession(
+              paymentSessionID,
+              paymentSessionToken,
+              paymentSessionSecret,
+            );
+            setStatus('Payment flow started');
+          } catch (androidError) {
+            console.error('Android payment error:', androidError);
+            setError(`Android Error: ${androidError instanceof Error ? androidError.message : String(androidError)}`);
+            setStatus('Error');
+          }
+        }
+      }
+      else if (!paymentSession) {
+        console.error("Failed to get a payment session.");
+        return;
+      }
+    } catch (error) {
+      console.error('General payment error:', error);
+      setError(`Error: ${error instanceof Error ? error.message : String(error)}`);
+      setStatus('Error');
+    }
+  };
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+## 🏵️ 5. Customizing Flow component
 
-```sh
-# Using npm
-npm run ios
+### 5.1 Tokenization only
 
-# OR using Yarn
-yarn ios
+In your CheckoutFlowManager.swift file, please set the `paymentButtonAction` component key to `.tokenization`
+
+```objectivec
+let flowComponent = try checkoutComponents.create(.
+                flow(options: [
+                    .card(// ...
+                          paymentButtonAction: .tokenization, // .tokenization: for tokenization-only -  .payment: for payments
+                         ),
+                    // ....
+                  ]))
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+### 5.2 Use your own button
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+In your CheckoutFlowManager.swift file, please set to `false` the `showPayButton` component
 
-## Step 3: Modify your app
+```objectivec
+let flowComponent = try checkoutComponents.create(.
+                flow(options: [
+                    .card(showPayButton: false, // if true: display built-in button - if false: show your own pay button
+                          // ...
+                         ),
+                    // ....
+                  ]))
+```
 
-Now that you have successfully run the app, let's make changes!
+### 5.3 Remove cardholder name section 
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+⚠️ Not possible on mobile for the moment
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+## ⌛️ 6. Run the App
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+### 6.1 In project root
+    ```bash
+    npx react-native start
+    ```
 
-## Congratulations! :tada:
+### 6.2 In another terminal
+    ```bash
+    npx react-native run-ios
+    ```
 
-You've successfully run and modified your React Native App. :partying_face:
+## 🎯 Troubleshooting
 
-### Now what?
+[Check out the Flow error codes you can encounter](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-on-your-mobile-app/flow-for-mobile-library-reference/ios/checkouterror)
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+# Android
 
-# Troubleshooting
+# 🔗 Useful Links
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+[Checkout Flow for Mobile iOS SDK](https://github.com/checkout/checkout-ios-components)
+[Accept payments on your mobile app](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-on-your-mobile-app)
+[Get started with Flow for mobile](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-on-your-mobile-app/get-started-with-flow-for-mobile)
+[Customize Flow for mobile](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-on-your-mobile-app/customize-flow-for-mobile)
+[Add localization to Flow for mobile](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-on-your-mobile-app/add-localization-to-flow-for-mobile)
 
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+<!-- ios/
+├── AppDelegate.swift # Swift-based app delegate
+├── CheckoutFlowManager.swift # Native module implemented in Swift
+├── CheckoutFlowManagerBridge.m # React Native bridge for the Swift module
+├── TestProject-Bridging-Header.h # Bridging header for React Native types -->

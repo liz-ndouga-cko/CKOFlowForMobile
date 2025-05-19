@@ -80,7 +80,8 @@ class CheckoutFlowManager: NSObject {
                 flow(options: [
                     .card(showPayButton: true, // if true: display built-in button - if false: show your own pay button
                           paymentButtonAction: .tokenization, // .tokenization: for tokenization-only -  .payment: for payments
-                         ),
+                          displayCardholderName:"hidden"
+                         )
                     // .applePay(merchantIdentifier: "your.merchant.ID")
                   ]))
                 let flowView = flowComponent.render()

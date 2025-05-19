@@ -5,7 +5,7 @@ import React
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-    let moduleName = "TestProject" // Make sure this matches AppRegistry.registerComponent(...)
+    let moduleName = "TestProject" // Must match your React Native Project Name
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {

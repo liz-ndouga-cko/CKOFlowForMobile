@@ -156,7 +156,7 @@ async function createSession(): Promise<PaymentSessionResponse | null> {
       _links: data._links,
     };
   } catch (error: any) {
-    console.error("Failed to create session:", error.message || error);
+    console.error("Failed to create a payment session:", error.message || error);
     return null;
   }
 }

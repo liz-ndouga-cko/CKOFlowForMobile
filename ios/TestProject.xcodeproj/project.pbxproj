@@ -22,7 +22,7 @@
 		12EA19D62DC6877F00A65048 /* Dummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dummy.swift; sourceTree = "<group>"; };
 		12EA19E12DC6B0E700A65048 /* CheckoutFlowManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckoutFlowManager.swift; sourceTree = "<group>"; };
 		12EA19E32DC6B12A00A65048 /* CheckoutFlowManagerBridge.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = CheckoutFlowManagerBridge.m; sourceTree = "<group>"; };
-		12EA19E52DC6B30200A65048 /* YourProjectName-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "YourProjectName-Bridging-Header.h"; sourceTree = "<group>"; };
+		12EA19E52DC6B30200A65048 /* TestProject-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TestProject-Bridging-Header.h"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* TestProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TestProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = TestProject/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = TestProject/Info.plist; sourceTree = "<group>"; };
@@ -79,7 +79,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				12EA19E52DC6B30200A65048 /* YourProjectName-Bridging-Header.h */,
+				12EA19E52DC6B30200A65048 /* TestProject-Bridging-Header.h */,
 				12EA19E32DC6B12A00A65048 /* CheckoutFlowManagerBridge.m */,
 				12EA19E12DC6B0E700A65048 /* CheckoutFlowManager.swift */,
 				12EA19D62DC6877F00A65048 /* Dummy.swift */,
