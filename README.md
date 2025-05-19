@@ -22,10 +22,10 @@ To check if your environment is properly set up, run :
 In my case the output reported:
 
 iOS
- ✓ Xcode - Required for building and installing your app on iOS
- ✓ Ruby - Required for installing iOS dependencies
- ✓ CocoaPods - Required for installing iOS dependencies
- ✓ .xcode.env - File to customize Xcode environment
+ - ✓ Xcode - Required for building and installing your app on iOS
+ - ✓ Ruby - Required for installing iOS dependencies
+ - ✓ CocoaPods - Required for installing iOS dependencies
+ - ✓ .xcode.env - File to customize Xcode environment
 
 ---
 
