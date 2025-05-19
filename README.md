@@ -1,6 +1,6 @@
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
 
-# **Guide to set up React Native with Checkout.com's Flow SDK for iOS and Android
+# Guide to set up React Native with Checkout.com's Flow SDK for iOS and Android
 This guide provides a complete walkthrough for setting up a React Native development environment and integrating [Checkout.com's Android Flow SDK](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-on-your-mobile-app/get-started-with-flow-for-mobile) for both iOS and 🔜 Android. It includes detailed instructions, common troubleshooting steps, and essential tips to ensure a smooth and efficient setup process for your project.
 
 # iOS
@@ -70,11 +70,11 @@ iOS
     2. In the left panel, click on the first YourProjectName, then go to Project>YourProjectName, under Package Dependencies tab, you should see checkout-ios-components listed
     3. In the left panel, click on the first YourProjectName, then go to Targets>YourProjectName, in the Link Binary with Libraries section, you should see CheckoutComponents. If not, add it by clicking on the plus icon, and searching for it.
 
-If everything looks good, you can proceed with 3. **Initializing CheckoutComponents** in your project.
+If everything looks good, you can proceed with 3. **Creating the bridge for CKO Flow SDK** in your project.
 
 ## 🌁 3. Creating the bridge for CKO Flow SDK 
 
-### **3.1 Add Swift to the Project
+### 3.1 Add Swift to the Project
 
 ### **Step 1: Add a Swift Bridging Header**
 
@@ -204,7 +204,7 @@ Please check the requirements mentioned in the [CKO documentation](https://www.c
 
 In your .tsx file, please call your `create payment session` function within your backend.
 
-```
+```tsx
 type PaymentSessionResponse = {
   id: string;
   payment_session_token: string;
@@ -244,7 +244,7 @@ async function createSession(): Promise<PaymentSessionResponse | null> {
 ```
 Then retrieve the payment session details and start the payment:
 
-```
+```tsx
 const startPayment = async () => {
     setStatus('Processing...');
     setError(null);
@@ -333,19 +333,17 @@ let flowComponent = try checkoutComponents.create(.
 
 ### 5.3 Remove cardholder name section 
 
-⚠️ Not possible on mobile for the moment
+⚠️ Not available on mobile for the moment
 
 ## ⌛️ 6. Run the App
 
 ### 6.1 In project root
-    ```bash
-    npx react-native start
-    ```
+
+    ```bash npx react-native start --reset-cache```
 
 ### 6.2 In another terminal
-    ```bash
-    npx react-native run-ios
-    ```
+
+    ```bash npx react-native run-ios```
 
 ## 🎯 Troubleshooting
 
@@ -355,11 +353,11 @@ let flowComponent = try checkoutComponents.create(.
 
 # 🔗 Useful Links
 
-[Checkout Flow for Mobile iOS SDK](https://github.com/checkout/checkout-ios-components)
-[Accept payments on your mobile app](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-on-your-mobile-app)
-[Get started with Flow for mobile](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-on-your-mobile-app/get-started-with-flow-for-mobile)
-[Customize Flow for mobile](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-on-your-mobile-app/customize-flow-for-mobile)
-[Add localization to Flow for mobile](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-on-your-mobile-app/add-localization-to-flow-for-mobile)
+- [Checkout Flow for Mobile iOS SDK](https://github.com/checkout/checkout-ios-components)
+- [Accept payments on your mobile app](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-on-your-mobile-app)
+- [Get started with Flow for mobile](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-on-your-mobile-app/get-started-with-flow-for-mobile)
+- [Customize Flow for mobile](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-on-your-mobile-app/customize-flow-for-mobile)
+- [Add localization to Flow for mobile](https://www.checkout.com/docs/payments/accept-payments/accept-a-payment-on-your-mobile-app/add-localization-to-flow-for-mobile)
 
 <!-- ios/
 ├── AppDelegate.swift # Swift-based app delegate
