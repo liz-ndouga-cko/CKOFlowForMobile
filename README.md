@@ -62,7 +62,7 @@ iOS
     https://github.com/checkout/checkout-ios-components
     ```
     
-5. Set **Dependency Rule** to **Up to Exact Version and input: 1.0.0-beta-3 (this is the latest version at the moment)**
+5. Set **Dependency Rule** to **Up to Exact Version and input: 1.0.0-beta-6 (this is the latest version at the moment)**
 6. Set Add to Project to YourProjectName
 7. Click **Add Package**.
 8. Verify installation:
@@ -339,11 +339,22 @@ let flowComponent = try checkoutComponents.create(.
 
 ### 6.1 In project root
 
-    ```bash npx react-native start --reset-cache```
+Check again your environment: 
+    ```bash
+        npx react-native doctor
+    ```
+
+Start your application:
+    ```bash 
+        npx react-native start --reset-cache
+    ```
 
 ### 6.2 In another terminal
 
-    ```bash npx react-native run-ios```
+Run ios:
+    ```bash 
+        npx react-native run-ios
+    ```
 
 ## 🎯 Troubleshooting
 
